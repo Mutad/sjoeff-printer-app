@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "author": "Nazar Potipaka <mutado.nzr@gmail.com>",
   "description": "Printer application for Sjoeff",
-  "license": null,
+  "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js",
