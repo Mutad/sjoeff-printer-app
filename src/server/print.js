@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import printer from 'pdf-to-printer'
 import fetch from 'node-fetch'
+import store from '../renderer/store'
 
 function print(request, response) {
   function onSuccess() {
@@ -9,7 +10,8 @@ function print(request, response) {
   }
 
   function onError(error) {
-    response.send({ status: 'error', error })
+    console.log({ status: 'error', error: error })
+    response.send({ status: 'error', error: error.toString() })
   }
 
   console.log('printer: ' + request.query.printer)
@@ -23,11 +25,16 @@ function print(request, response) {
         .print(pdf, { printer: request.query.printer })
         .then(onSuccess)
         .catch(onError)
-        .finally(() => {
+        .then(() => {
           console.log('completed!')
+          store.dispatch('addTask', {
+            url: request.query.url,
+            printer: request.query.printer
+          })
           remove(pdf)
         })
     })
+    .catch(onError)
 }
 
 function save(buffer) {
