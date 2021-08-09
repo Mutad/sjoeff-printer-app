@@ -50,6 +50,7 @@ function createWindow() {
     title: 'Sjoeff printer server'
   })
   const iconPath = path.join(__dirname, '../../build/icons/logo@4x.png')
+  console.log('Icon path: ' + iconPath)
   tray = new Tray(nativeImage.createFromPath(iconPath))
   const contextMenu = Menu.buildFromTemplate([
     {

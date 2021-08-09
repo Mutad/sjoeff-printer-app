@@ -1,7 +1,7 @@
 {
   "name": "sjoeff-printer-app",
   "productName": "sjoeff-printer-app",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Nazar Potipaka <mutado.nzr@gmail.com>",
   "description": "Printer application for Sjoeff",
   "license": "MIT",
@@ -20,8 +20,51 @@
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "postinstall": "npm run lint:fix"
+    "postinstall": "npm run lint:fix",
+    "eb-pack": "electron-builder --dir",
+    "eb-dist": "electron-builder",
+    "eb-dist-all": "electron-builder -mwl"
   },
+  "build": {
+    "productName": "Sjoeff Printer App",
+    "appId": "com.toplock.sjoeff",
+    "extends": null,
+    "directories": {
+      "buildResources": "build/icons",
+      "output": "build"
+    },
+    "files": [
+      "dist/electron",
+      "node_modules/",
+      "package.json",
+      "build/icons/logo@4x.png"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns"
+    },
+    "win": {
+      "icon": "build/icons/icon.ico"
+    },
+    "linux": {
+      "icon": "build/icons"
+    }
+  },
+  "postinstall": "electron-builder install-app-deps",
   "dependencies": {
     "auto-launch": "^5.0.5",
     "axios": "^0.18.0",
@@ -37,6 +80,7 @@
     "vuex-electron": "^1.0.0"
   },
   "devDependencies": {
+    "electron-builder": "^22.11.7",
     "ajv": "^6.5.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.3",
