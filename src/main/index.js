@@ -1,8 +1,10 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, Tray, nativeImage, Menu, shell } from 'electron'
 import '../renderer/store'
 import { createServer, stopServer } from '../server/createServer'
+import AutoLaunch from 'auto-launch'
+import path from 'path'
 
 /**
  * Set `__static` path to static files in production
@@ -15,6 +17,22 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
+let tray
+let autoLauncher = new AutoLaunch({
+  name: 'Sjoeff printer server'
+})
+
+if (process.env.NODE_ENV !== 'development') {
+  autoLauncher
+    .isEnabled()
+    .then(function(isEnabled) {
+      if (isEnabled) return
+      autoLauncher.enable()
+    })
+    .catch(function(err) {
+      throw err
+    })
+}
 
 const winURL =
   process.env.NODE_ENV === 'development'
@@ -28,9 +46,33 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 600,
+    title: 'Sjoeff printer server'
   })
-
+  const iconPath = path.join(__dirname, '../../build/icons/logo@4x.png')
+  tray = new Tray(nativeImage.createFromPath(iconPath))
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Sjoef panel',
+      type: 'normal',
+      click: () => shell.openExternal('http://www.verzendbeheer-toplock.nl')
+    },
+    // {
+    //   label: 'Print', type: "normal", click: () => {
+    //     ptp.print('test.pdf')
+    //       .then(console.log)
+    //       .catch(console.log);
+    //     // win.webContents.print(options, (success, errorType) => {
+    //     //   if (!success) console.log(errorType)
+    //     // })
+    //   }
+    // },
+    { type: 'separator' },
+    { label: 'Quit', type: 'normal', click: () => app.exit() }
+  ])
+  tray.setToolTip('Sjoeff printer server.')
+  tray.setContextMenu(contextMenu)
+  console.log(tray)
   mainWindow.loadURL(winURL)
 
   createServer()

@@ -8,6 +8,7 @@ const del = require('del')
 const packager = require('electron-packager')
 const webpack = require('webpack')
 const Listr = require('listr')
+const Multispinner = require('multispinner')
 
 const buildConfig = require('./build.config')
 const mainConfig = require('./webpack.main.config')
@@ -42,7 +43,7 @@ async function build () {
 
   let results = ''
 
-  const tasks = new Listr(
+  const tasks2 = new Listr(
     [
       {
         title: 'building master process',
@@ -74,7 +75,7 @@ async function build () {
     { concurrent: 2 }
   )
 
-  await tasks
+  await tasks2
     .run()
     .then(() => {
       process.stdout.write('\x1B[2J\x1B[0f')
