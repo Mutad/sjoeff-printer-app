@@ -49,10 +49,17 @@ function createWindow() {
     width: 600,
     title: 'Sjoeff printer server'
   })
+
   const iconPath = path.join(__dirname, '../../build/icons/logo@4x.png')
   console.log('Icon path: ' + iconPath)
   tray = new Tray(nativeImage.createFromPath(iconPath))
   const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show App',
+      click: () => {
+        mainWindow.show()
+      }
+    },
     {
       label: 'Sjoef panel',
       type: 'normal',
@@ -69,7 +76,14 @@ function createWindow() {
     //   }
     // },
     { type: 'separator' },
-    { label: 'Quit', type: 'normal', click: () => app.exit() }
+    {
+      label: 'Quit',
+      type: 'normal',
+      click: () => {
+        app.isQuiting = true
+        app.quit()
+      }
+    }
   ])
   tray.setToolTip('Sjoeff printer server.')
   tray.setContextMenu(contextMenu)
@@ -81,6 +95,19 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null
     stopServer()
+  })
+  mainWindow.on('minimize', function(event) {
+    event.preventDefault()
+    mainWindow.hide()
+  })
+
+  mainWindow.on('close', function(event) {
+    if (!app.isQuiting) {
+      event.preventDefault()
+      mainWindow.hide()
+    }
+
+    return false
   })
 }
 

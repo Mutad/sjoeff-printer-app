@@ -3,6 +3,7 @@ import path from 'path'
 import printer from 'pdf-to-printer'
 import fetch from 'node-fetch'
 import store from '../renderer/store'
+import {app} from 'electron'
 
 function print(request, response) {
   function onSuccess() {
@@ -19,6 +20,7 @@ function print(request, response) {
     .then((res) => res.buffer())
     .then((buffer) => {
       const pdf = save(buffer)
+      console.log(pdf)
 
       console.log('printing from url: ' + request.query.url)
       printer
@@ -38,7 +40,8 @@ function print(request, response) {
 }
 
 function save(buffer) {
-  const pdfPath = path.join(__dirname, randomString() + '.pdf')
+  // saving pdf to temp directory
+  const pdfPath = path.join(app.getPath('temp'), randomString() + '.pdf')
   fs.writeFileSync(pdfPath, buffer, 'binary')
   return pdfPath
 }
