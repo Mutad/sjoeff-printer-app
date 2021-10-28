@@ -1,11 +1,26 @@
 import fs from 'fs'
 import path from 'path'
 import printer from 'pdf-to-printer'
-import fetch from 'node-fetch'
+import fetch, { Headers } from 'node-fetch'
 import store from '../renderer/store'
 import {app} from 'electron'
+const https = require('https')
+const http = require('http')
 
 function print(request, response) {
+  var agentOptions
+  var agent
+
+  agentOptions = {
+    rejectUnauthorized: false
+  }
+  if (request.secure) {
+    console.log('secured')
+    agent = new https.Agent(agentOptions)
+  } else {
+    agent = new http.Agent(agentOptions)
+  }
+
   function onSuccess() {
     response.send({ status: 'completed' })
   }
@@ -15,8 +30,14 @@ function print(request, response) {
     response.send({ status: 'error', error: error.toString() })
   }
 
-  console.log('printer: ' + request.query.printer)
-  fetch(request.query.url)
+  console.log('printer: ' + request.query.printer + ' url: ' + request.query.url)
+  console.log(request.headers.authorization)
+  fetch(request.query.url, {
+    agent: agent,
+    headers: new Headers({
+      'Authorization': request.headers.authorization
+    })
+  })
     .then((res) => res.buffer())
     .then((buffer) => {
       const pdf = save(buffer)
