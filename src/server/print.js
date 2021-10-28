@@ -14,10 +14,11 @@ function print(request, response) {
   agentOptions = {
     rejectUnauthorized: false
   }
-  if (request.secure) {
+  if (request.query.url.startsWith('https')) {
     console.log('secured')
     agent = new https.Agent(agentOptions)
   } else {
+    console.log('unsecured')
     agent = new http.Agent(agentOptions)
   }
 

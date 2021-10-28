@@ -1,7 +1,7 @@
 {
   "name": "sjoeff-printer-app",
   "productName": "sjoeff-printer-app",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Nazar Potipaka <mutado.nzr@gmail.com>",
   "description": "Printer application for Sjoeff",
   "license": "MIT",
